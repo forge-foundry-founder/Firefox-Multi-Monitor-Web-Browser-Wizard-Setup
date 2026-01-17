@@ -1,0 +1,72 @@
+<!--
+THE EVIDENCE - How long these APIs have existed:
+
+window.open() 
+  First appeared: Netscape Navigator 2.0 - December 1995 (30 YEARS OLD)
+
+localStorage
+  First appeared: HTML5 spec - Late 2000s (~2009) (16 YEARS OLD)
+
+Fullscreen API
+  First appeared: ~2011-2012 (Firefox 10 in 2012) (13 YEARS OLD)
+
+screen.width / screen.height
+  First appeared: Original JavaScript - 1995 (30 YEARS OLD)
+
+Google's Window Management API: Started 2018, Shipped 2022 (4 years)
+
+The APIs existed for DECADES. They chose complexity anyway.
+-->
+
+<!--
+Instead of using 30-year-old APIs that already worked
+
+Earliest evidence of Window Management API dates back to 2018-2019:
+
+https://discourse.wicg.io/t/proposal-supporting-window-placement-on-multi-screen-devices/3948/
+
+https://developer.chrome.com/docs/capabilities/web-apis/window-management
+
+https://groups.google.com/a/chromium.org/g/blink-dev/c/X6rEbWvU7cI
+
+https://groups.google.com/a/chromium.org/g/blink-dev/c/C6xw8i1ZIdE
+-->
+
+<!--
+THE QUESTION EVERY SHAREHOLDER, USER, AND COMPANY SHOULD ASK:
+
+The Window Management API is marketed as "free."
+
+Is it really?
+
+COMPANIES PAY:
+- Technical consultants to change backend infrastructure
+- Developer time learning the new API (vs using window.open())
+- Permission prompt rejection (how many users will they lose)
+- Ongoing maintenance (Chrome-only = vendor lock-in)
+
+USERS PAY:
+- Privacy loss (permission prompts = more data collection)
+- Worse UX (chromeless windows, permission friction)
+- Exclusion (Firefox/Safari users blocked)
+- Higher prices (companies pass costs to customers)
+
+How long before these costs are passed to the end user?
+
+That's you, sitting at the bottom of the Silicon Extraction Stack.
+-->
+
+<!--
+30-year-old APIs, what does that say about:
+
+1. Credentialism in tech hiring
+2. Corporate incentives vs. user needs  
+3. "Innovation" as performance theater
+4. Complexity as job security
+
+The simple solution existed all along.
+
+They chose not to use it.
+
+Ask yourself why.
+-->
