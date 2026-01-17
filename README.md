@@ -5,6 +5,8 @@ Hopefully Firefox or a browser built with the Gecko Engine will fine this demo u
 
 Included 10 screenshots for reference.
 
+![Step 1](screenshots/Screenshot_01.png)
+
 screenshots/Screenshot_01.png
 
 screenshots/Screenshot_02.png
