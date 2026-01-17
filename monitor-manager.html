@@ -1,0 +1,288 @@
+<!--
+This 3-step wizard allows users to configure unlimited monitors to launch Firefox windows on assigned displays.
+
+1. Profile Name: - Not fully implemented this would be useful for Web based IDEs, Trading Platforms, and other companies that are currently waiting on the rent extraction Windows Management API to solve a simple problem with yet another unneccessary API
+2. Monitor Posistions: This could become an editable drop down list for users with more than 6 monitors
+3. An Exit Fullscreen Button could be added for smoother User interaction
+4. Clear Storage button could be removed or placed in a controls area this was more for quick testing 
+5. Don't show this wizard again - I think it is setup but if not, shouldn't be a problem for the real professionals
+6. Open Browser Windows Maximized it not setup but shouldn't be a problem
+7. Test All requires a user to allow popups, I left this alone rather than circumventing security measures
+8. Reload and Reconfig might be better served in a browser toolbar area 
+9. Add or Remove Monitor button would probably be useful, rather than running the entire setup wizard again
+
+Not much of this demo is likely to survive if and when a web browser decides to adopt it. I am not willing to recompile an entire Web Browser this demo should provide more than enough insights for that to happen.
+
+Note: Do your own market analysis of the opporunity that exists using this demo.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firefox Multi-Monitor Setup Wizard</title>
+    <link rel="stylesheet" href="css/wizard.css">
+    <link rel="stylesheet" href="css/toolbar.css">
+    <style>
+        .app-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .view {
+            display: none;
+        }
+        
+        .view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- WIZARD VIEW -->
+    <div class="view active" id="wizard-view">
+        <div class="wizard-container">
+            <!-- Progress Bar -->
+            <div class="wizard-progress" id="wizard-progress">
+                <div class="progress-step active" data-step="1">
+                    <div class="progress-circle">1</div>
+                    <div class="progress-label">Setup</div>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="progress-circle">2</div>
+                    <div class="progress-label">Configure</div>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="progress-circle">3</div>
+                    <div class="progress-label">Review</div>
+                </div>
+            </div>
+
+            <!-- Step Container -->
+            <div class="wizard-steps">
+                
+                <!-- STEP 1: Welcome + Setup + Profile -->
+                <div class="wizard-step active" data-step="1">
+                    <div class="step-header">
+                        <div class="step-icon">🦊️ Firefox</div>
+                        <h2 class="step-title">Multi-Monitor Web Browser Setup</h2>
+                        <p class="step-desc">Configure Firefox in 3 simple steps</p>
+                    </div>
+                    
+                    <!-- Theme Selection -->
+                    <div class="form-group">
+                        <label for="theme-select">Select Theme:</label>
+                        <select id="theme-select" class="input" onchange="WizardController.applyTheme(this.value)">
+                            <option value="dark">Dark (default)</option>
+                            <option value="light">Light</option>
+                        </select>
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="info-box" style="margin-top: 20px;">
+                        <p><strong>Features:</strong> Unlimited monitor support</p>
+                        <p><strong>Privacy:</strong> All data stays on your device</p>
+                        <p><strong>Profiles:</strong> Supported via localStorage</p>
+                    </div>
+
+                    <!-- Profile Name -->
+                    <div class="form-group" style="margin-top: 25px;">
+                        <label for="wizard-profile-name">Profile Name:</label>
+                        <input type="text" id="wizard-profile-name" class="input" 
+                               placeholder="e.g., Gaming, Work, Coding" 
+                               oninput="WizardController.onProfileNameInput()">
+                        <p class="hint">Name this workspace configuration</p>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Configure Monitors -->
+                <div class="wizard-step" data-step="2">
+                    <div class="breadcrumb-container">
+                        <div class="breadcrumb" id="monitor-breadcrumb">Configuring Monitor 1</div>
+                    </div>
+
+                    <div class="wizard-phase active" data-phase="calibrate">
+                        <div class="step-header">
+                            <div class="step-icon">🔍</div>
+                            <h2 class="step-title">Calibrate Monitor Position</h2>
+                            <p class="step-desc">We need to detect where this monitor is located</p>
+                        </div>
+                        <div class="calibration-box">
+                            <h3>📌 Instructions:</h3>
+                            <ol>
+                                <li>Press <strong>F11</strong> or click the button below to enter fullscreen</li>
+                                <li>Make sure this window is on the monitor you're configuring</li>
+                                <li>We'll capture the exact screen position automatically</li>
+                                <li>Press <strong>F11</strong> again (or ESC) to exit fullscreen</li>
+                            </ol>
+                        </div>
+                        <button class="btn btn-primary btn-large" onclick="WizardController.enterFullscreen()">
+                            🖥️ Enter Fullscreen to Calibrate
+                        </button>
+                    </div>
+
+                    <div class="wizard-phase" data-phase="input">
+                        <div class="calibration-success">
+                            <strong>✅ Calibration Complete!</strong><br>
+                            Captured Position: <span id="calibrated-coords">--</span>
+                            <button class="btn btn-secondary btn-small" style="margin-left: 15px;" onclick="WizardController.recalibrate()">🔄 Re-Calibrate</button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="monitor-position">Monitor Position:</label>
+                            <select id="monitor-position" class="input"></select>
+                            <p class="hint">Where is this monitor physically located?</p>
+                            <p class="warning" id="position-warning">This position is already in use</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="monitor-name">Monitor Name:</label>
+                            <input type="text" id="monitor-name" class="input" placeholder="e.g., Left Monitor, Gaming Display">
+                            <p class="hint">This name identifies the monitor when opening windows</p>
+                            <p class="warning" id="name-warning">This name is already in use</p>
+                        </div>
+
+                        <button class="btn btn-success btn-block" onclick="WizardController.addMonitor()">
+                            ➕ Add Monitor to Configuration
+                        </button>
+                    </div>
+
+                    <div class="wizard-phase" data-phase="list">
+                        <div class="step-header">
+                            <div class="step-icon">✅</div>
+                            <h3>Your Configured Monitors</h3>
+                        </div>
+
+                        <div class="monitor-list" id="monitor-list"></div>
+
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="WizardController.addAnotherMonitor()">➕ Add Another Monitor</button>
+                            <button class="btn btn-danger" onclick="WizardController.clearAllMonitors()">Clear All Tags</button>
+                        </div>
+
+                        <div class="info-box" id="monitor-count-info">⚠️ Minimum 2 monitors required</div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Review -->
+                <div class="wizard-step" data-step="3">
+                    <div class="step-header">
+                        <div class="step-icon">✅</div>
+                        <h2 class="step-title">Review Configuration</h2>
+                        <p class="step-desc">Verify your setup before finishing</p>
+                    </div>
+
+                    <div class="review-box">
+                        <div class="review-item">
+                            <strong>Profile Name:</strong>
+                            <span id="review-profile">--</span>
+                        </div>
+                        <div class="review-item">
+                            <strong>Monitors Configured:</strong>
+                            <span id="review-monitor-count">0</span>
+                        </div>
+                        <div class="review-monitors" id="review-monitors"></div>						
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="dont-show-again">
+                            <span>Don't show this wizard again</span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Navigation -->
+            <div class="wizard-footer">
+                <div class="footer-left">
+                    <button class="btn btn-danger" onclick="WizardController.clearStorage()">Clear Storage</button>
+                </div>
+                <div class="footer-right">
+                    <button class="btn btn-secondary" id="back-btn" onclick="WizardController.prevStep()">← Back</button>
+                    <button class="btn btn-primary" id="next-btn" onclick="WizardController.nextStep()">Next →</button>
+                    <button class="btn btn-success" id="finish-btn" onclick="WizardController.finish()">Finish</button>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" id="detected-x" value="0">
+        <input type="hidden" id="detected-y" value="0">
+        <input type="hidden" id="calibrated-x" value="">
+        <input type="hidden" id="calibrated-y" value="">
+        <input type="hidden" id="detected-resolution" value="">
+        <input type="hidden" id="detected-orientation" value="">
+    </div>
+
+    <!-- TOOLBAR VIEW -->
+    <div class="view" id="toolbar-view">
+        <div class="toolbar-container">
+            <div class="toolbar-header">
+                <div class="toolbar-icon">🦊️</div>
+                <h1 class="toolbar-title">Firefox Control</h1>
+                <p class="toolbar-desc">Manage your Firefox browser windows</p>
+            </div>
+
+            <div class="config-status" id="config-status">
+                <div class="status-item">
+                    <strong>Profile:</strong> <span id="profile-name">Not configured</span>
+                </div>
+                <div class="status-item">
+                    <strong>Monitors:</strong> <span id="monitor-count">0</span>
+                </div>
+            </div>
+
+            <div class="toolbar-controls">
+                <div class="control-section">
+                    <h3>Open Window</h3>
+                    
+                    <div class="form-group">
+                        <label for="monitor-select">Select Monitor:</label>
+                        <select id="monitor-select" class="input">
+                            <option value="">-- No monitors configured --</option>
+                        </select>
+                    </div>
+
+                    <label class="checkbox-label">
+						<input type="checkbox" id="open-browser-maximized">
+                        <span>Open Browser Windows Maximized</span>
+                    </label>
+
+                    <button class="btn btn-primary btn-large" onclick="ToolbarController.openWindow()">
+                        🚀 Open Window
+                    </button>				
+                </div>
+
+                <div class="control-section">
+                    <h3>Active Windows</h3>
+                    <div class="window-list" id="window-list">
+                        <p class="hint">No windows open</p>
+                    </div>
+                    <button class="btn btn-danger" onclick="ToolbarController.closeAllWindows()">
+                        ❌ Close All Windows
+                    </button>
+                </div>
+            </div>
+
+            <div class="toolbar-actions">
+                <button class="btn btn-secondary" onclick="ToolbarController.reloadConfig()">🔄 Reload Config</button>
+                <button class="btn btn-secondary" onclick="IntegrationController.showWizard()">⚙️ Reconfigure</button>
+                <button class="btn btn-secondary" onclick="ToolbarController.testPositions()">🧪 Test All</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/config-manager.js"></script>
+<script src="js/component-registry.js"></script>
+<script src="js/window-manager.js"></script>
+<script src="js/wizard-controller.js"></script>
+<script src="js/toolbar-controller.js"></script>
+<script src="js/app-controller.js"></script>
+
+</body>
+</html>
